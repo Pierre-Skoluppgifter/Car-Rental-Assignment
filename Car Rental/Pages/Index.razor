@@ -1,0 +1,139 @@
+﻿@page "/"
+@using Car_Rental.Business.Classes
+@using Common.Enums
+@inject BookingProcessor bp
+
+<PageTitle>Your no.1 car rental partner.</PageTitle>
+<h2>Car Rental Assignment</h2>
+
+
+
+<h5>Vehicles</h5>
+<div class="row">
+    <div class="col-md-8 form-select-sm">
+            <table class="table border border-1 border-black table-borderless table-hover table-sm text-nowrap">
+                <thead>
+                    <tr>
+                        <th class="bg-black text-white-50">Reg.Nr</th>
+                        <th class="bg-black text-white-50">Brand</th>
+                        <th class="bg-black text-white-50">Odometer</th>
+                        <th class="bg-black text-white-50">Cost/Km</th>
+                        <th class="bg-black text-white-50">Vehicle Type</th>
+                        <th class="bg-black text-white-50">$ day</th>
+                        <th class="bg-black text-white-50">Action</th>
+                        <th class="bg-black text-white-50">Status</th>
+                    </tr>
+                </thead>
+        
+                <tbody>
+                    <tr>
+                        <td><input style="width: 100px" type="text" name="Reg.Nr" value="Reg.Nr"></td>
+                        <td><input style="width: 100px" type="text" name="Brand" value="Brand"></td>
+                    <td><input style="width: 50px" type="text" name="Odometer" value="0"></td>
+                    <td><input style="width: 50px" type="text" name="Cost/Km" value="0"></td>
+                        <td><button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">@VehicleTypes.Sedan</button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">@VehicleTypes.Stationwagon</a></li>
+                                <li><a class="dropdown-item" href="#">@VehicleTypes.SUV</a></li>
+                                <li><a class="dropdown-item" href="#">@VehicleTypes.Jeep</a></li>
+                                <li><a class="dropdown-item" href="#">@VehicleTypes.Motorcycle</a></li>
+                            </ul>
+                        </td>
+                        <td></td>
+                        <td><button class="btn btn-sm btn-outline-dark">Add</button></td>
+
+                    </tr>
+                    @foreach(var vehicle in bp.GetVehicles())
+                        {
+                         <tr>
+                             <td scope="row" class="fw-bold">@vehicle.RegNumber</td>
+                             <td>@vehicle.Brand</td>
+                             <td>@vehicle.Odometer</td>
+                             <td>@vehicle.CostPerKilometer</td>
+                             <td>@vehicle.VehicleType</td>
+                             <td>@vehicle.CostPerDay</td>
+                             
+                                
+                                <td><a class="btn btn-sm btn-outline-dark dropdown-toggle w-100" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
+                                        <ul class="dropdown-menu">
+                                            @foreach (var customer in bp.GetPersons())
+                                            {
+                                            <li><a class="dropdown-item" href="#">@customer.FirstName</a></li>
+                                            }
+                                        </ul>
+                                </td>
+                        <td class="badge rounded-pill text-bg-@(vehicle.VehicleStatus == VehicleStatuses.Booked ? "danger"
+                                : vehicle.VehicleStatus == VehicleStatuses.Available ? "dark" : "success")">@vehicle.VehicleStatus
+                        </td>
+                         </tr>
+                        }
+                </tbody>
+            </table>
+    </div>
+</div>
+
+
+
+<h5>Bookings</h5>
+<div class="row">
+    <div class="col-md-6 form-select-sm">
+        <table class="table border border-1 border-black table-hover table-sm">
+            <thead>
+                <tr>
+                    <th scope="col" class="bg-black text-white-50">RegNo</th>
+                    <th scope="col" class="bg-black text-white-50">Customer</th>
+                    <th scope="col" class="bg-black text-white-50"><span>Km rented</span></th>
+                    <th scope="col" class="bg-black text-white-50">Km returned</th>
+                    <th scope="col" class="bg-black text-white-50">Rented</th>
+                    <th scope="col" class="bg-black text-white-50">Returned</th>
+                    <th scope="col" class="bg-black text-white-50">Cost</th>
+                    <th scope="col" class="bg-black text-white-50">Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach(var bookings in bp.GetBookings())
+                {
+                    <tr>
+                        <td scope="row" class="fw-bold">@bookings.RegNumber</td>
+                        <td>@bookings.FirstName @bookings.LastName (@bookings.SSN)</td>
+                        <td>@bookings.KmRented</td>
+                        <td>@bookings.KmReturned</td>
+                        <td>@bookings.DateRented.ToShortDateString()</td>
+                        <td>@bookings.DateReturned?.ToShortDateString()</td>
+                        <td>@bookings.RentCost</td>
+                        <td class="badge rounded-pill text-bg-@(bookings.VehicleStatus == VehicleStatuses.Booked ? "danger"
+                        : bookings.VehicleStatus == VehicleStatuses.Closed ? "success" : "dark")">@bookings.VehicleStatus</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<h5>Customers</h5>
+<div class="row">
+    <div class="col-md-3 form-select-sm">
+        <table class="table border border-1 border-black table-hover table-sm">
+            <thead>
+                <tr>
+                    <th scope="col" class="bg-black text-white-50">SSN</th>
+                    <th scope="col" class="bg-black text-white-50">Last Name</th>
+                    <th scope="col" class="bg-black text-white-50">First Name</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                    @foreach(var customer in bp.GetPersons())
+                    {
+                        <tr>
+                        <td scope="row" class="fw-bold form-select-sm">@customer.SocialSecurityNumber</td>
+                        <td class="form-select-sm">@customer.LastName</td>
+                        <td class="form-select-sm">@customer.FirstName</td>
+                        </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+</div>
