@@ -1,6 +1,6 @@
 ﻿namespace Car_Rental.Common.Enums;
 
-public enum VehicleBrands
+public enum VehicleBrand
 {
     Volvo,
     Tesla,
