@@ -2,92 +2,99 @@
 @using Car_Rental.Business.Classes
 @using Car_Rental.Classes;
 @using Car_Rental.Common.Classes;
-@using Car_Rental.Common.Extensions
-@using Common.Enums
+@using Car_Rental.Common.Enums;
+@using Car_Rental.Common.Extensions;
 @inject BookingProcessor bp
 @inject InputValues iv
+
 
 <PageTitle>Your no.1 car rental partner.</PageTitle>
 <h2>Car Rental Assignment</h2>
 
-<div class="alert alert-warning" style="width:500px; height:100px" role="alert">
-    simple info alert—check it out!
+@* Alert label *@
+<div>
+    @if(bp.Error != null)
+    {
+        <div class="alert alert-warning align-top" style="width:500px; height:200px" role="alert"></div>
+    }
 </div>
-<h5>Vehicles</h5>
-<div class="row form-select-sm">
-    <div class="col-md-7">
-        <table class="table border border-1 border-black table-borderless table-hover text-nowrap">
-                <thead>
-                    <tr>
-                    <th class="bg-black text-white-50">Reg.Nr</th>
-                    <th class="bg-black text-white-50">Brand</th>
-                    <th class="bg-black text-white-50">Odometer</th>
-                    <th class="bg-black text-white-50">Cost/Km</th>
-                    <th class="bg-black text-white-50">Vehicle Type</th>
-                    <th class="bg-black text-white-50">$ day</th>
-                    <th class="bg-black text-white-50">Action</th>
-                    <th class="bg-black text-white-50">Filter</th>
-                    <th class="bg-black text-white-50">Status</th>
-                    </tr>
-                </thead>
 
-                <tbody>
+@* Vehicles *@
+<h5>Vehicles</h5>
+<div class="row">
+    <div class="col-md-7 form-select-sm">
+        <table class="table border border-1 border-black table-hover table-sm table-borderless align-baseline">
+            <thead>
+                <tr class="bg-black table-active">
+                    <th scope="col" class="bg-black text-white">Reg.Nr</th>
+                    <th scope="col" class="bg-black text-white">Brand</th>
+                    <th scope="col" class="bg-black text-white">Odometer</th>
+                    <th scope="col" class="bg-black text-white">Cost/Km</th>
+                    <th scope="col" class="bg-black text-white">Type</th>
+                    <th scope="col" class="bg-black text-white">$ day</th>
+                    <th scope="col" class="bg-black text-white">Action</th>
+                    <th scope="col" class="bg-black text-white"></th>
+                    <th scope="col" class="bg-black text-white">Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
                 <tr>
-                    <td><input style="width: 75px" class="form-text" name="Reg.Nr" @bind="iv.Vehicle.RegistrationNumber"></td>
+                    <td><input style="width: 70px" class="form-text" @bind="iv.Vehicle.RegNumber"></td>
                     <td>
-                        <select @bind="iv.Vehicle">
-                            @foreach (var brand in Enum.GetNames(typeof(VehicleBrand)))
+                        <select @bind="iv.Vehicle.Brands">
+                        @foreach (var brand in Enum.GetNames(typeof(VehicleBrands)))
+                        {
+                            <option value="@Enum.Parse(typeof(VehicleBrands), @brand)">@brand</option>
+                        }
+                        </select>
+                    </td>
+                    <td><input style="width: 50px" class="form-text" @bind="iv.Vehicle.Odometer"></td>
+                    <td><input style="width: 50px" class="form-text" @bind="iv.Vehicle.CostKm"></td>
+                    <td>
+                        <select @bind="iv.Vehicle.Type">
+                            @foreach (var type in Enum.GetNames(typeof(VehicleTypes)))
                             {
-                                <option value="@brand">@brand</option>
+                                <option value="@Enum.Parse(typeof(VehicleTypes), @type)">@type</option>
                             }
                         </select>
                     </td>
-                    <td><input style="width: 50px" class="form-text" name="Odometer" @bind="iv.Vehicle.Odometer"></td>
-                    <td><input style="width: 50px" class="form-text" name="Cost/Km" @bind="iv.Vehicle.CostPerKilometer"></td>
+                    <td></td>
+                    <td><input style="width: 50px" class="form-text" @bind="iv.Vehicle.CostDay"></td>
                     <td>
-                        <select @bind="iv.Vehicle.VehicleType">
-                            @foreach (var type in Enum.GetNames(typeof(VehicleType)))
-                            {
-                                <option value="@type">@type</option>
-                            }
-                        </select>
-                    </td>
-                    <td><input style="width: 50px" class="form-text" name="CostPerDay" @bind="iv.Vehicle.CostPerDay"></td>
-                    <td>
-                        @* <button class="btn btn-sm btn-outline-success" name="AddVehicle" style="height: 23px; width:40px" @onclick="(() => bp.AddVehicle<Vehicle>())">
-                            Add
-                        </button> *@
+                        <button class="btn btn-sm btn-outline-success" style="height: 23px; width:40px" @onclick="(() => bp.Add(iv.Vehicle))">Add</button>
                     </td>
                 </tr>
-                @foreach (var booking in bp.GetBooking())
+                @foreach (var vehicle in bp.GetVehicles())
                 {
                     <tr>
-                        <td scope="row" class="fw-bold">@booking.RegistrationNumber</td>
-                        <td>@booking.RegistrationNumber</td>
-                        <td>@booking.</td>
-                        <td>@booking.CostKm</td>
-                        <td>@booking.</td>
-                        <td>@booking.</td>
+                        <td scope="row" class="fw-bold">@vehicle.RegNumber</td>
+                        <td>@vehicle.Brands</td>
+                        <td>@vehicle.Odometer</td>
+                        <td>@vehicle.CostKm</td>
+                        <td>@vehicle.Type</td>
+                        <td>@vehicle.CostDay</td>
                         <td>
-                            <select @bind="iv.Person.FirstName">
-                                @foreach (var customer in bp.GetPerson())
+                            <select @bind="(iv.Person.SSN)">
+                                @foreach (var person in bp.GetPersons())
                                 {
-                                    <option>@customer.FirstName @customer.LastName (@customer.SocialSecurityNumber)</option>
+                                    <option value="@iv.Person.SSN">@person.FirstName @person.LastName @person.SSN</option>
                                 }
                             </select>
                         </td>
-                        <td><button class="btn btn-sm btn-outline-@(booking.status == VehicleStatuses.Booked ? "success" : "info")" style="height: 20px; width:auto" name="BookVehicle">@(booking.status == VehicleStatuses.Booked ? "Return" : "Rent")</button></td>
-                        <td class="badge text-bg-@(booking.status == VehicleStatuses.Booked ? "danger"
-                                    : booking.status == VehicleStatuses.Available ? "dark" : "success")">
-                            @booking.status
-                            </td>
-                         </tr>
+                        <td>
+                            <button class="btn btn-sm btn-outline-@(vehicle.Status == VehicleStatus.Booked ? "success" : "info")" @onclick="(() => bp.Add(iv.Booking))">
+                                @(vehicle.Status == VehicleStatus.Booked ? "Return" : "Rent")</button>
+                        </td>
+                        <td class="badge text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</td>
+                    </tr>
                 }
-                </tbody>
-            </table>
+            </tbody>
+        </table>
     </div>
 </div>
 
+@* Bookings *@
 <h5>Bookings</h5>
 <div class="row">
     <div class="col-md-6 form-select-sm">
@@ -106,27 +113,26 @@
             </thead>
 
             <tbody>
-                @foreach(var booking in bp.GetBooking())
+                @foreach(var booking in bp.GetBookings())
                 {
                     <tr>
-                        <td scope="row" class="fw-bold">@booking.RegistrationNumber</td>
-                            <td>bookings.FirstName @booking.LastName (@booking.SSN)</td>
-                            <td>@booking.KmRented</td>
+                        <td scope="row" class="fw-bold">@booking.Vehicle.RegNumber</td>
+                        <td>@booking.Vehicle.Brands)</td>
+                        <td>@booking.Vehicle.Odometer</td>
                         <td>@booking.KmReturned</td>
                         <td>@booking.DateRented.ToShortDateString()</td>
-                        <td>@booking.DateReturned?.ToShortDateString()</td>
-                       @*  <td>@VehicleExtensions.CalculateRentCost(bookings.Vehicle)</td> *@
+                        <td>@booking.DateReturned.ToShortDateString()</td>
+                        <td>@VehicleExtensions.Duration(booking.DateRented, booking.DateReturned)</td>
                         <td></td>
-                        <td class="badge text-bg-@(booking.status == VehicleStatuses.Booked ? "danger"
-                        : booking.status == VehicleStatuses.Closed ? "success" : "dark")">@booking.status</td>
+                        <td class="badge text-bg-@(booking.status == VehicleStatus.Booked ? "danger" : booking.status == VehicleStatus.Closed ? "success" : "dark")">@booking.status</td>
                     </tr>
-                }
+                } 
             </tbody>
         </table>
-    </div>
-</div>
+     </div>
+</div> 
 
-
+@* Customers *@
 <h5>Customers</h5>
 <div class="row">
     <div class="col-md-3 form-select-sm">
@@ -142,20 +148,20 @@
 
                 <tbody>
                 <tr>
-                    <td><input style="width: 75px" class="form-text" name="SSN" @bind="iv.Person.SocialSecurityNumber"></td>
+                    <td><input style="width: 75px" class="form-text" name="SSN" @bind="iv.Person.SSN"></td>
                     <td><input style="width: 120px" class="form-text" name="FirstName" @bind="iv.Person.LastName"></td>
                     <td><input style="width: 120px" class="form-text" name="LastName" @bind="iv.Person.FirstName"></td>
-                    <td><button class="btn btn-sm btn-outline-success" name="AddPerson" style="height: 25px; width:40px" @onclick="(() => bp.GetPerson())">Add</button></td>
+                    <td><button class="btn btn-sm btn-outline-success" name="AddPerson" style="height: 25px; width:40px" @onclick="(() => bp.Add(iv.Person))">Add</button></td>
                 </tr>
-                    @foreach(var person in bp.GetPerson())
+                    @foreach(var person in bp.GetPersons())
                     {
                         <tr>
-                        <td scope="row" class="fw-bold form-select-sm">@person.SocialSecurityNumber</td>
+                        <td scope="row" class="fw-bold form-select-sm">@person.SSN</td>
                         <td class="form-select-sm">@person.LastName</td>
                         <td class="form-select-sm">@person.FirstName</td>
                         </tr>
                     }
             </tbody>
-        </table>
+        </table> 
     </div>
 </div>

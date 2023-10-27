@@ -1,38 +1,32 @@
-﻿using Car_Rental.Common.Classes;
-
-namespace Car_Rental.Common.Extensions;
+﻿namespace Car_Rental.Common.Extensions;
 
 public static class VehicleExtensions
 {
-    public static int Duration(this DateTime startDate, DateTime endDate)
+    public static double Duration(this DateTime startDate, DateTime endDate)
     {
-        int value = default;
-        return value;
+        var duration = (endDate - startDate).TotalDays;
+        //RentCost(duration);
+        return duration;
     }
-    //public static void Add<T>(this List<T> Vehicle, T vehicle);
-    //public static double? CalculateRentCost(Booking booking)
+    //public static double RentCost(double days)
     //{
-    //    if (booking.VehicleStatus == Enums.VehicleStatuses.Closed && booking.DateReturned is not null)
-    //    {
-    //        var kmCost = KmCost(booking.KmRented, booking.KmReturned, booking.CostKm);
-    //        double daysRented = DaysRented(booking.DateRented, booking.DateReturned);
-    //        var totalRentalCost = kmCost + (daysRented * booking.Vehicle.CostPerDay);
-    //        return totalRentalCost;
-    //    }
-    //    return null;
+    //    var kmCost = (Vehicle.Odometer, KmReturned, Vehicle.CostKm);
+    //    double daysRented = DaysRented(DateRented, (DateTime)DateReturned);
+    //    var totalRentalCost = kmCost + (daysRented * Vehicle.CostDay);
+    //    return totalRentalCost;
 
     //}
 
-    //private static int DaysRented(DateTime dateRented, DateTime? dateReturned)
-    //{
-    //    var x = dateReturned - dateRented;
-    //    return Math.Round(TimeSpan., 0);
-    //}
-
-    //private static double KmCost(double kmRented, double kmReturned, double costPerKm)
+    //private double KmCost(double kmRented, double kmReturned, double costPerKm)
     //{
     //    var totalKmDriven = kmReturned - kmRented;
     //    var totalKmCost = totalKmDriven * costPerKm;
     //    return totalKmCost;
+    //}
+
+    //private double DaysRented(DateTime dateRented, DateTime dateReturned)
+    //{
+    //    var x = dateReturned - dateRented;
+    //    return Math.Round(x.TotalDays, 0);
     //}
 }

@@ -4,15 +4,15 @@ namespace Car_Rental.Common.Classes;
 
 public class Motorcycle : Vehicle
 {
-    public Motorcycle(int id, string regNumber, VehicleBrand brand, int odometer, double costPerKilometer, VehicleType vehicleType, int costPerDay, VehicleStatuses vehicleStatus)
+    public Motorcycle(int id, string regNumber, VehicleBrands brands, int odometer, double costKm, VehicleTypes vehicleType, int costDay, VehicleStatus vehicleStatus)
     {
         Id = id;
-        RegistrationNumber = regNumber;
-        VehicleBrand = brand;
+        RegNumber = regNumber;
+        Brands = brands;
         Odometer = odometer;
-        CostPerKilometer = costPerKilometer;
-        VehicleType = vehicleType;
-        CostPerDay = costPerDay;
-        VehicleStatus = vehicleStatus;
+        CostKm = costKm;
+        Type = vehicleType;
+        CostDay = costDay;
+        Status = vehicleStatus;
     }
 }

@@ -7,6 +7,5 @@ public class InputValues
 {
     public IVehicle Vehicle { get; set; } = new Vehicle();
     public IPerson Person { get; set; } = new Person();
-    //public IBooking Booking { get; set; } = new Booking();
-
+    public IBooking Booking { get; set; } = new Booking();
 }

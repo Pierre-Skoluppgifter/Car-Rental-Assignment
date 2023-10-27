@@ -5,28 +5,21 @@ namespace Car_Rental.Common.Classes;
 
 public class Booking : IBooking
 {
+    public IPerson Person { get; set; }
+    public IVehicle Vehicle { get; set; }
     public int Id { get; set; }
-    public int SSN { get; set; }
-    public string RegistrationNumber { get; init; }
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
-    public int KmRented { get; set; }
     public int KmReturned { get; set; }
     public DateTime DateRented { get; set; }
-    public DateTime? DateReturned { get; set; }
+    public DateTime DateReturned { get; set; }
     public double CostKm { get; set; }
     public int CostDay { get; set; }
-    public VehicleStatuses status { get; set; }
+    public VehicleStatus status { get; set; }
 
-    public Booking(int id, int ssn, string registrationNumber, string firstName, string lastName, int kmRented, int kmReturned, DateTime dateRented, DateTime? dateReturned, double costKm, int costDay, VehicleStatuses vehicleStatuses)
+    public Booking(int id, IPerson person, IVehicle vehicle, int kmReturned, DateTime dateRented, DateTime dateReturned, double costKm, int costDay, VehicleStatus vehicleStatuses)
     {
-
         Id = id;
-        SSN = ssn;
-        RegistrationNumber = registrationNumber;
-        FirstName = firstName;
-        LastName = lastName;
-        KmRented = kmRented;
+        Person = person;
+        Vehicle = vehicle;
         KmReturned = kmReturned;
         DateRented = dateRented;
         DateReturned = dateReturned;
@@ -35,24 +28,30 @@ public class Booking : IBooking
         status = vehicleStatuses;
     }
 
-    //public double? CalculateRentCost()
+    public Booking()
+    {
+    }
+
+    //public double? RentCost()
     //{
-    //    if (Vehicle.VehicleStatus is VehicleStatuses.Closed && DateReturned is not null)
+    //    if (Vehicle.Status is VehicleStatus.Closed && DateReturned is not )
     //    {
-    //        var kmCost = KmCost(KmRented, KmReturned, Vehicle.CostPerKilometer);
+    //        var kmCost = KmCost(Vehicle.Odometer, KmReturned, Vehicle.CostKm);
     //        double daysRented = DaysRented(DateRented, (DateTime)DateReturned);
-    //        var totalRentalCost = kmCost + (daysRented * Vehicle.CostPerDay);
+    //        var totalRentalCost = kmCost + (daysRented * Vehicle.CostDay);
     //        return totalRentalCost;
     //    }
     //    return null;
 
     //}
+
     //private double KmCost(double kmRented, double kmReturned, double costPerKm)
     //{
     //    var totalKmDriven = kmReturned - kmRented;
     //    var totalKmCost = totalKmDriven * costPerKm;
     //    return totalKmCost;
     //}
+
     //private double DaysRented(DateTime dateRented, DateTime dateReturned)
     //{
     //    var x = dateReturned - dateRented;
