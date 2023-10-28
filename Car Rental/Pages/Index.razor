@@ -62,7 +62,7 @@
                     <td></td>
                     <td><input style="width: 50px" class="form-text" @bind="iv.Vehicle.CostDay"></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-success" style="height: 23px; width:40px" @onclick="(() => bp.Add(iv.Vehicle))">Add</button>
+                        <button class="btn btn-sm btn-outline-success" style="height: 23px; width:40px" @onclick="(() => bp.AddVehicle(iv.Vehicle))">Add</button>
                     </td>
                 </tr>
                 @foreach (var vehicle in bp.GetVehicles())
@@ -83,7 +83,7 @@
                             </select>
                         </td>
                         <td>
-                            <button class="btn btn-sm btn-outline-@(vehicle.Status == VehicleStatus.Booked ? "success" : "info")" @onclick="(() => bp.Add(iv.Booking))">
+                            <button class="btn btn-sm btn-outline-@(vehicle.Status == VehicleStatus.Booked ? "success" : "info")" @onclick="(() => bp.AddBooking(iv.Booking))">
                                 @(vehicle.Status == VehicleStatus.Booked ? "Return" : "Rent")</button>
                         </td>
                         <td class="badge text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</td>
@@ -151,7 +151,7 @@
                     <td><input style="width: 75px" class="form-text" name="SSN" @bind="iv.Person.SSN"></td>
                     <td><input style="width: 120px" class="form-text" name="FirstName" @bind="iv.Person.LastName"></td>
                     <td><input style="width: 120px" class="form-text" name="LastName" @bind="iv.Person.FirstName"></td>
-                    <td><button class="btn btn-sm btn-outline-success" name="AddPerson" style="height: 25px; width:40px" @onclick="(() => bp.Add(iv.Person))">Add</button></td>
+                    <td><button class="btn btn-sm btn-outline-success" name="AddPerson" style="height: 25px; width:40px" @onclick="(() => bp.AddPerson(iv.Person))">Add</button></td>
                 </tr>
                     @foreach(var person in bp.GetPersons())
                     {

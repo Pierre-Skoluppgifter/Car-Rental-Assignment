@@ -1,4 +1,6 @@
-﻿using Car_Rental.Common.Interfaces;
+﻿using Car_Rental.Common.Classes;
+using Car_Rental.Common.Enums;
+using Car_Rental.Common.Interfaces;
 using Car_Rental.Data.Interfaces;
 
 namespace Car_Rental.Business.Classes;
@@ -11,10 +13,11 @@ public class BookingProcessor
     public IEnumerable<IBooking> GetBookings() => _db.Get<IBooking>(b => b != null);
     public IEnumerable<IPerson> GetPersons() => _db.Get<IPerson>(p => p != null);
     public IEnumerable<IVehicle> GetVehicles() => _db.Get<IVehicle>(v => v != null);
-    //public void AddVehicle(IVehicle iv) => _db.Add(iv);
-    //public void AddPerson(IPerson ip) => _db.Add(ip);
-    //public void AddBooking(IBooking ib) => _db.Add(ib);
-    public void Add<T>(T item) where T : class => _db.Add(item);
+    public void AddVehicle(IVehicle iv) { iv.Id = _db.NextVehicleId;iv.Status = VehicleStatus.Available; _db.Add(iv); }
+    public void AddPerson(IPerson ip) => _db.Add(ip);
+    public void AddBooking(IBooking ib) => _db.Add(ib);
+
+    //public void Add<T>(T item) where T : class => _db.Add(item);
 
     //public IBooking ReturnVehicle(int vehicleId, double distance)
     //{

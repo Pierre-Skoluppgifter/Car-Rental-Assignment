@@ -13,8 +13,8 @@ public interface IData
     //IBooking RentVehicle(IBooking booking);
 
     int NextVehicleId { get; }
-    int NextPersonId { get; }
-    int NextBookingId { get; }
+    int NextPersonId { get { return NextPersonId; } }
+    int NextBookingId { get { return NextBookingId; } }
 
     //IBooking ReturnVehicle(int vehicleId);
     // Default Interface Methods
