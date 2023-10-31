@@ -5,31 +5,25 @@ namespace Car_Rental.Common.Classes;
 
 public class Booking : IBooking
 {
-    public IPerson Person { get; set; }
+    public IPerson Customer { get; set; }
     public IVehicle Vehicle { get; set; }
     public int Id { get; set; }
-    public int KmReturned { get; set; }
+    public int? KmRent { get; set; }
+    public int? KmReturn { get; set; }
     public DateTime DateRented { get; set; }
     public DateTime DateReturned { get; set; }
-    public double CostKm { get; set; }
-    public int CostDay { get; set; }
-    public VehicleStatus status { get; set; }
+    public VehicleStatus Status { get; set; }
 
-    public Booking(int id, IPerson person, IVehicle vehicle, int kmReturned, DateTime dateRented, DateTime dateReturned, double costKm, int costDay, VehicleStatus vehicleStatuses)
+    public Booking(int id, IPerson person, IVehicle vehicle, int kmRented, int? kmReturned, DateTime dateRented, DateTime dateReturned, VehicleStatus status)
     {
         Id = id;
-        Person = person;
+        Customer = person;
         Vehicle = vehicle;
-        KmReturned = kmReturned;
+        Vehicle.Odometer = kmRented;
         DateRented = dateRented;
+        Status = status;
         DateReturned = dateReturned;
-        CostKm = costKm;
-        CostDay = costDay;
-        status = vehicleStatuses;
-    }
-
-    public Booking()
-    {
+        KmReturn = kmReturned;
     }
 
     //public double? RentCost()

@@ -2,6 +2,7 @@
 using Car_Rental.Common.Enums;
 using Car_Rental.Common.Interfaces;
 using Car_Rental.Data.Interfaces;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -32,15 +33,16 @@ namespace Car_Rental.Data.Classes
             var motorcycle1 = new Motorcycle(NextVehicleId, "OSK444", VehicleBrands.Yamaha, 1650, 1.5, VehicleTypes.Motorcycle, 150, VehicleStatus.Booked);
             _vehicles.Add(motorcycle1);
 
-            var person1 = new Person(NextPersonId, 123456, "Pierre", "Ottosson");
+            var person1 = new Person(NextPersonId, "123456", "John", "Doe");
             _persons.Add(person1);
-
-            var person2 = new Person(NextPersonId, 159357, "Kristoffer", "Ottosson");
+            var person2 = new Person(NextPersonId, "159357", "Jane", "Doe");
             _persons.Add(person2);
 
-            var booking1 = new Booking(NextBookingId, person1, car3, 5500, DateTime.Now, DateTime.Now.AddDays(+1), car3.CostKm, car3.CostDay, VehicleStatus.Closed);
+            var booking = new Booking(NextBookingId, person2, car1, car1.Odometer, 0, DateTime.Now, DateTime.Now,  VehicleStatus.Booked);
+            _bookings.Add(booking);
+            var booking1 = new Booking(NextBookingId, person2, car3, car3.Odometer, 3500, DateTime.Now, DateTime.Now.AddDays(+2), VehicleStatus.Closed);
             _bookings.Add(booking1);
-            var booking2 = new Booking(NextBookingId, person2, motorcycle1, 2050, DateTime.Now, DateTime.Now.AddDays(0), motorcycle1.CostKm, motorcycle1.CostDay, motorcycle1.Status);
+            var booking2 = new Booking(NextBookingId, person1, motorcycle1, motorcycle1.Odometer, 0, DateTime.Now, DateTime.Now, VehicleStatus.Booked);
             _bookings.Add(booking2);
         }
 
@@ -57,19 +59,28 @@ namespace Car_Rental.Data.Classes
             return collection.Where(expression).ToList();
         }
 
-        public List<T> Single<T>(Expression<Func<T, bool>>? expression)
+        T? IData.Single<T>(Expression<Func<T, bool>>? expression) where T : default
         {
-            var collections = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(List<T>) && f.IsInitOnly) ?? throw new InvalidDataException();
+            try
+            {
+                var collections = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                    .FirstOrDefault(f => f.FieldType == typeof(List<T>) && f.IsInitOnly)
+                    ?? throw new InvalidDataException();
 
-            var value = collections.GetValue(this) ?? throw new InvalidDataException();
+                var value = collections.GetValue(this) ?? throw new InvalidDataException();
 
-            var collection = ((List<T>)value).AsQueryable();
+                var collection = ((List<T>)value).AsQueryable();
+                if (expression is null) return collection.Single();
+                return collection.Where(expression).Single();
+                
+            }
+            catch
+            {
+                throw;
+            }
 
-            if (expression is null) return collection.ToList();
-
-            return collection.Where(expression).ToList();
         }
-        public void Add<T>(T item)
+        void IData.Add<T>(T item)
         {
             var collections = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                 .FirstOrDefault(f => f.FieldType == typeof(List<T>) && f.IsInitOnly)

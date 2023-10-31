@@ -6,7 +6,7 @@ namespace Car_Rental.Common.Classes;
 public class Vehicle : IVehicle
 {
     public int Id { get; set; }
-    public string RegNumber { get; set; } = string.Empty;
+    public string? RegNumber { get; set; }
     public VehicleBrands Brands { get; set; }
     public int Odometer { get; set; }
     public double CostKm { get; set; }

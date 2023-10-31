@@ -1,21 +1,23 @@
-﻿namespace Car_Rental.Common.Extensions;
+﻿using Car_Rental.Common.Classes;
+using Car_Rental.Common.Interfaces;
+
+namespace Car_Rental.Common.Extensions;
 
 public static class VehicleExtensions
 {
-    public static double Duration(this DateTime startDate, DateTime endDate)
+    
+    public static double Duration(this DateTime startDate, DateTime endDate,IBooking booking, IVehicle vehicle, int? distance)
     {
-        var duration = (endDate - startDate).TotalDays;
-        //RentCost(duration);
-        return duration;
+        double duration = (endDate - startDate).TotalDays;
+        double totalRentCost = RentCost(duration, booking, vehicle, distance);
+        return totalRentCost;
     }
-    //public static double RentCost(double days)
-    //{
-    //    var kmCost = (Vehicle.Odometer, KmReturned, Vehicle.CostKm);
-    //    double daysRented = DaysRented(DateRented, (DateTime)DateReturned);
-    //    var totalRentalCost = kmCost + (daysRented * Vehicle.CostDay);
-    //    return totalRentalCost;
-
-    //}
+    public static double RentCost(double totalDays, IBooking booking, IVehicle vehicle, int? distance)
+    {
+        var kmCost = (distance * vehicle.CostKm);
+        var rentCost = kmCost + (totalDays * vehicle.CostDay);
+        return (double)rentCost;
+    }
 
     //private double KmCost(double kmRented, double kmReturned, double costPerKm)
     //{
