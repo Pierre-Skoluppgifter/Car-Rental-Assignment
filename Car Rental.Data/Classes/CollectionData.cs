@@ -1,8 +1,8 @@
 ﻿using Car_Rental.Common.Classes;
 using Car_Rental.Common.Enums;
+using Car_Rental.Common.Extensions;
 using Car_Rental.Common.Interfaces;
 using Car_Rental.Data.Interfaces;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -30,7 +30,7 @@ namespace Car_Rental.Data.Classes
             _vehicles.Add(car3);
             var car4 = new Car(NextVehicleId, "MNB159", VehicleBrands.Jeep, 550, 3, VehicleTypes.Jeep, 300, VehicleStatus.Available);
             _vehicles.Add(car4);
-            var motorcycle1 = new Motorcycle(NextVehicleId, "OSK444", VehicleBrands.Yamaha, 1650, 1.5, VehicleTypes.Motorcycle, 150, VehicleStatus.Booked);
+            var motorcycle1 = new Motorcycle(NextVehicleId, "OSK444", VehicleBrands.Yamaha, 1650, 1.5, VehicleTypes.Motorcycle, 150, VehicleStatus.Available);
             _vehicles.Add(motorcycle1);
 
             var person1 = new Person(NextPersonId, "123456", "John", "Doe");
@@ -38,11 +38,11 @@ namespace Car_Rental.Data.Classes
             var person2 = new Person(NextPersonId, "159357", "Jane", "Doe");
             _persons.Add(person2);
 
-            var booking = new Booking(NextBookingId, person2, car1, car1.Odometer, 0, DateTime.Now, DateTime.Now,  VehicleStatus.Booked);
+            var booking = new Booking(NextBookingId, person2, car1, (int)car1.Odometer, 0, null, DateTime.Now, DateTime.Now, VehicleStatus.Booked);
             _bookings.Add(booking);
-            var booking1 = new Booking(NextBookingId, person2, car3, car3.Odometer, 3500, DateTime.Now, DateTime.Now.AddDays(+2), VehicleStatus.Closed);
+            var booking1 = new Booking(NextBookingId, person2, car3, (int)car3.Odometer, 3500, VehicleExtensions.Duration(DateTime.Now, DateTime.Now.AddDays(+2), car3, 1200), DateTime.Now, DateTime.Now.AddDays(+2), VehicleStatus.Closed);
             _bookings.Add(booking1);
-            var booking2 = new Booking(NextBookingId, person1, motorcycle1, motorcycle1.Odometer, 0, DateTime.Now, DateTime.Now, VehicleStatus.Booked);
+            var booking2 = new Booking(NextBookingId, person1, motorcycle1, (int)motorcycle1.Odometer, 0, null, DateTime.Now, DateTime.Now, VehicleStatus.Booked);
             _bookings.Add(booking2);
         }
 
@@ -59,7 +59,7 @@ namespace Car_Rental.Data.Classes
             return collection.Where(expression).ToList();
         }
 
-        T? IData.Single<T>(Expression<Func<T, bool>>? expression) where T : default
+        T? IData.Single<T>(Expression<Func<T, bool>> expression) where T : default
         {
             try
             {
@@ -68,15 +68,12 @@ namespace Car_Rental.Data.Classes
                     ?? throw new InvalidDataException();
 
                 var value = collections.GetValue(this) ?? throw new InvalidDataException();
-
                 var collection = ((List<T>)value).AsQueryable();
-                if (expression is null) return collection.Single();
-                return collection.Where(expression).Single();
-                
+                return collection.Single(expression) ?? throw new InvalidDataException();
             }
             catch
             {
-                throw;
+                throw new InvalidDataException();
             }
 
         }

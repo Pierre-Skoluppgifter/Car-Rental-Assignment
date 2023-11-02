@@ -10,6 +10,7 @@ public interface IBooking
     public int Id { get; set; }
     public int? KmRent { get; set; }
     public int? KmReturn { get; set; }
+    public double? RentCost { get; set; }
     public DateTime DateRented { get; set; }
     public DateTime DateReturned { get; set; }
     public VehicleStatus Status { get; set; }

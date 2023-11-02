@@ -10,16 +10,18 @@ public class Booking : IBooking
     public int Id { get; set; }
     public int? KmRent { get; set; }
     public int? KmReturn { get; set; }
+    public double? RentCost { get; set; }
     public DateTime DateRented { get; set; }
     public DateTime DateReturned { get; set; }
     public VehicleStatus Status { get; set; }
 
-    public Booking(int id, IPerson person, IVehicle vehicle, int kmRented, int? kmReturned, DateTime dateRented, DateTime dateReturned, VehicleStatus status)
+    public Booking(int id, IPerson person, IVehicle vehicle, int kmRented, int? kmReturned, double? rentCost, DateTime dateRented, DateTime dateReturned, VehicleStatus status)
     {
         Id = id;
         Customer = person;
         Vehicle = vehicle;
         Vehicle.Odometer = kmRented;
+        RentCost = rentCost;
         DateRented = dateRented;
         Status = status;
         DateReturned = dateReturned;

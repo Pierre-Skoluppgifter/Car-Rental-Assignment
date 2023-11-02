@@ -13,15 +13,19 @@
 
 @* Alert label *@
 <div>
-    @if(bp.Error != null)
+    @if (bp.Error != null)
     {
-        <div class="alert alert-warning align-top" style="width:500px; height:200px" role="alert">@bp.Error</div>
+        <div class="alert alert-warning align-top" style="width:500px; height:150px" role="alert">
+            <ul>
+                <li>@bp.Error</li>                
+            </ul>
+        </div>
     }
 </div>
 
 @* Vehicles *@
 <h5>Vehicles</h5>
-<div class="row">
+<div class="row container-fluid">
     <div class="col-md-7 form-select-sm">
         <table class="table border border-1 border-black table-hover table-sm table-borderless align-baseline">
             <thead>
@@ -33,7 +37,6 @@
                     <th scope="col" class="bg-black text-white">Type</th>
                     <th scope="col" class="bg-black text-white">$ day</th>
                     <th scope="col" class="bg-black text-white">Action</th>
-                    <th scope="col" class="bg-black text-white"></th>
                     <th scope="col" class="bg-black text-white">Status</th>
                 </tr>
             </thead>
@@ -61,9 +64,9 @@
                     </td>
                     <td><input style="width: 50px" class="form-text" @bind="iv.Vehicle.CostDay"></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-success" style="height: 23px; width:40px" @onclick="(() => bp.AddVehicle(iv.Vehicle))">Add</button>
+                        <button class="btn btn-sm btn-outline-success" style="height: 25px; width:40px" @onclick="(() => bp.AddVehicle(iv.Vehicle))">Add</button>
                     </td>
-                </tr>
+                    </tr>
                 @foreach (var vehicle in bp.GetVehicles())
                 {
                     <tr>
@@ -74,20 +77,25 @@
                         <td>@vehicle.Type</td>
                         <td>@vehicle.CostDay</td>
                         <td>
-                            <select @bind="iv.Person.SSN">
-                                @foreach (var person in bp.GetPersons())
-                                {
-                                    <option value="@person.SSN">@person.FirstName @person.LastName @person.SSN</option>
-                                }
-                            </select>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "info")" @onclick="(() => bp.AddBooking(vehicle, iv.Person.SSN))">Rent</button>
-                            <button class="btn btn-sm btn-outline-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "info")" @onclick="(() => bp.ReturnVehicle(vehicle.Id, iv.KmReturn))">Return</button>
+                            @if (vehicle.Status != VehicleStatus.Booked)
+                            {
+                                <select @bind="iv.Person.SSN">
+                                    @foreach (var person in bp.GetPersons())
+                                    {
+                                        <option value="@person.SSN">@person.FirstName @person.LastName (@person.SSN)</option>
+                                    }
+                                </select>
+                                <button class="btn btn-outline-info" style="height:25px" @onclick="(() => bp.AddBooking(vehicle, iv.Person.SSN))">Rent</button>
+                            }
+                            else
+                            {
+                                <input type="number" class="form-text" style="width: 145px; height:25px" @bind="iv.distance">
+                                <button class="btn btn-outline-danger" style="height:25px" @onclick="(() => bp.ReturnVehicle(vehicle.Id,iv.distance))">Return</button>
+                            }
                         </td>
                         <td class="badge text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</td>
                     </tr>
-                }
+                    }
             </tbody>
         </table>
     </div>
@@ -121,8 +129,10 @@
                         <td>@booking.KmReturn</td>
                         <td>@booking.DateRented.ToShortDateString()</td>
                         <td>@booking.DateReturned.ToShortDateString()</td>
-                        <td>@iv.distance</td>
-                        <td class="badge text-bg-@(booking.Status == VehicleStatus.Booked ? "danger" : booking.Status == VehicleStatus.Closed ? "success" : "dark")">@booking.Status</td>
+                        <td>@booking.RentCost</td>
+                        <td class="badge text-bg-@(booking.Status == VehicleStatus.Booked ? "danger" : booking.Status == VehicleStatus.Closed ? "success" : "dark")
+                                                 @(booking.Status == VehicleStatus.Booked ? iv.Vehicle.Status == VehicleStatus.Booked : iv.Vehicle.Status == VehicleStatus.Closed)">@booking.Status
+                        </td>
                     </tr>
                 } 
             </tbody>
