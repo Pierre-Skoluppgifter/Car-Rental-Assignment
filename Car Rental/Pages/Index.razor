@@ -1,9 +1,9 @@
 ﻿@page "/"
 @using Car_Rental.Business.Classes
-@using Car_Rental.Classes;
-@using Car_Rental.Common.Classes;
-@using Car_Rental.Common.Enums;
-@using Car_Rental.Common.Extensions;
+@using Car_Rental.Classes
+@using Car_Rental.Common.Classes
+@using Car_Rental.Common.Enums
+@using Car_Rental.Common.Extensions
 @inject BookingProcessor bp
 @inject InputValues iv
 
@@ -15,7 +15,7 @@
 <div>
     @if (bp.Error != null)
     {
-        <div class="alert alert-warning align-top" style="width:500px; height:150px" role="alert">
+        <div class="alert alert-warning align-top;" style="width:500px; height:150px" role="alert">
             <ul>
                 <li>@bp.Error</li>                
             </ul>
@@ -25,9 +25,8 @@
 
 @* Vehicles *@
 <h5>Vehicles</h5>
-<div class="row container-fluid">
-    <div class="col-md-7 form-select-sm">
-        <table class="table border border-1 border-black table-hover table-sm table-borderless align-baseline">
+<div class="col-md-7 align-top form-select-sm">
+    <table class="table border border-1 border-black table-hover table-sm table-borderless">
             <thead>
                 <tr class="bg-black table-active">
                     <th scope="col" class="bg-black text-white">Reg.Nr</th>
@@ -43,7 +42,7 @@
 
             <tbody>
                 <tr>
-                    <td><input style="width: 70px" class="form-text" @bind="iv.Vehicle.RegNumber"></td>
+                    <td><input style="width: 70px; height: 20px;" class="form-text;" @bind="iv.Vehicle.RegNumber"></td>
                     <td>
                         <select @bind="iv.Vehicle.Brands">
                         @foreach (var brand in Enum.GetNames(typeof(VehicleBrands)))
@@ -52,8 +51,8 @@
                         }
                         </select>
                     </td>
-                    <td><input style="width: 50px" class="form-text" @bind="iv.Vehicle.Odometer"></td>
-                    <td><input style="width: 50px" class="form-text" @bind="iv.Vehicle.CostKm"></td>
+                    <td><input style="width: 50px; height: 20px;" class="form-text;" @bind="iv.Vehicle.Odometer"></td>
+                    <td><input style="width: 50px; height: 20px;" class="form-text;" @bind="iv.Vehicle.CostKm"></td>
                     <td>
                         <select @bind="iv.Vehicle.Type">
                             @foreach (var type in Enum.GetNames(typeof(VehicleTypes)))
@@ -62,9 +61,9 @@
                             }
                         </select>
                     </td>
-                    <td><input style="width: 50px" class="form-text" @bind="iv.Vehicle.CostDay"></td>
+                    <td><input style="width: 50px; height: 20px;" class="form-text;" @bind="iv.Vehicle.CostDay"></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-success" style="height: 25px; width:40px" @onclick="(() => bp.AddVehicle(iv.Vehicle))">Add</button>
+                        <button class="btn btn-sm btn-outline-success align-top" @onclick="(() => bp.AddVehicle(iv.Vehicle))">Add</button>
                     </td>
                     </tr>
 
@@ -77,7 +76,7 @@
                         <td>@vehicle.CostKm</td>
                         <td>@vehicle.Type</td>
                         <td>@vehicle.CostDay</td>
-                        <td>
+                        <td><span class="align-content-center">
                             @if (vehicle.Status != VehicleStatus.Booked)
                             {
                                 @if(vehicle.Status == VehicleStatus.Closed){ vehicle.Status = VehicleStatus.Available; }
@@ -88,22 +87,22 @@
                                     }
                                 </select>
 
-                                <button class="btn btn-outline-info" style="height:25px" @onclick="(() => bp.AddBooking(vehicle, iv.Person.SSN))">Rent</button>
+                            <button class="btn btn-sm btn-outline-info" style="height:25px" @onclick="(() => bp.AddBooking(vehicle, iv.Person.SSN))">Rent</button>
                             }
                             else
                             {
-                                
-                                <input type="number" class="form-text" style="width: 145px; height:25px" @bind="iv.distance">
-                                <button class="btn btn-outline-danger" style="height:25px" @onclick="(() => bp.ReturnVehicle(vehicle.Id, iv.distance))">Return</button>
+
+                            <input type="number" class="form-text" style="width:144px" @bind="iv.distance">
+                            <button class="btn btn-sm btn-outline-danger" style="height:25px" @onclick="(() => bp.ReturnVehicle(vehicle.Id, iv.distance))">Return</button>
                             }
-                        </td>
-                        <td class="badge text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</td>                        
-                    </tr>
+                        </span>
+                    </td>
+                    <td><span class="badge align-bottom text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</span></td>
+                </tr>
                 }
             </tbody>
         </table>
     </div>
-</div>
 
 @* Bookings *@
 <h5>Bookings</h5>

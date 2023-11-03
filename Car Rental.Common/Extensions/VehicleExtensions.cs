@@ -14,6 +14,6 @@ public static class VehicleExtensions
         }
         var totalKmCost = distance * costKm;
         var totalRentCost = (daysRented * costDay) + totalKmCost;
-        return totalRentCost;
+        return Math.Round(totalRentCost);
     }
 }

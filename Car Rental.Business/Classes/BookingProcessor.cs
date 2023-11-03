@@ -43,36 +43,34 @@ public class BookingProcessor
 
         try
         {
-            if (iv.CostKm != 0 || iv.Odometer != 0 || iv.Odometer !> 20000 || iv.CostKm != 0 || iv.CostKm! > 5 || iv.CostKm != 0 || iv.CostDay != 0 || iv.CostDay != 0 || iv.CostDay! > 300)
+            if (iv.CostKm != 0 || iv.CostKm! > 5 || iv.Odometer != 0 || iv.Odometer! > 20000 || iv.CostDay != 0 || iv.CostDay! > 300)
             {
                 if (iv.RegNumber.Length == 6 && iv.RegNumber[..3].All(char.IsLetter) && iv.RegNumber[3..].All(char.IsNumber))
                 {
-                    iv.RegNumber.ToUpper();
-
-                    foreach (var vehicle in vehicles)
+                    iv.RegNumber = iv.RegNumber.ToUpper();
+                    foreach(var vehicle in vehicles)
                     {
                         if (vehicle.RegNumber == iv.RegNumber)
                         {
                             Error = "Registrationnumber already exists!";
                             return;
                         }
-                            
                     }
                     Error = null;
                     iv.Status = VehicleStatus.Available;
                     _db.Add(iv);
+                    iv = null;
                 }
-                else
-                    Error = "Registrationnumber must begin with three letters and end with three numbers and not be longer than 6 characters!";
             }
             else
-                Error = "Registrationnumber must begin with three letters and end with three numbers and not be longer than 6 characters!";
+                Error = "Fields can't be empty";
         }
         catch
         {
-            Error = "Fields can't be empty";
+
         }
     }
+ 
 
     //public lägg till asynkron returdata typ RentVehicle(int vehicleId, int customerId)
     //{

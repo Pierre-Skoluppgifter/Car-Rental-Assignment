@@ -74,7 +74,10 @@ namespace Car_Rental.Data.Classes
                 var collection = ((List<T>)value).AsQueryable();
                 return collection.Single(expression) ?? throw new InvalidDataException();
             }
-            catch { throw new InvalidDataException(); }
+            catch 
+            {
+                throw new InvalidDataException();
+            }
         }
         void IData.Add<T>(T item)
         {
