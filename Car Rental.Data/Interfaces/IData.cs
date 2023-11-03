@@ -1,7 +1,4 @@
-﻿using Car_Rental.Common.Classes;
-using Car_Rental.Common.Enums;
-using Car_Rental.Common.Interfaces;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Car_Rental.Data.Interfaces;
 

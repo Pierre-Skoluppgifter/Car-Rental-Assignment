@@ -67,6 +67,7 @@
                         <button class="btn btn-sm btn-outline-success" style="height: 25px; width:40px" @onclick="(() => bp.AddVehicle(iv.Vehicle))">Add</button>
                     </td>
                     </tr>
+
                 @foreach (var vehicle in bp.GetVehicles())
                 {
                     <tr>
@@ -79,23 +80,26 @@
                         <td>
                             @if (vehicle.Status != VehicleStatus.Booked)
                             {
+                                @if(vehicle.Status == VehicleStatus.Closed){ vehicle.Status = VehicleStatus.Available; }
                                 <select @bind="iv.Person.SSN">
                                     @foreach (var person in bp.GetPersons())
                                     {
                                         <option value="@person.SSN">@person.FirstName @person.LastName (@person.SSN)</option>
                                     }
                                 </select>
+
                                 <button class="btn btn-outline-info" style="height:25px" @onclick="(() => bp.AddBooking(vehicle, iv.Person.SSN))">Rent</button>
                             }
                             else
                             {
+                                
                                 <input type="number" class="form-text" style="width: 145px; height:25px" @bind="iv.distance">
-                                <button class="btn btn-outline-danger" style="height:25px" @onclick="(() => bp.ReturnVehicle(vehicle.Id,iv.distance))">Return</button>
+                                <button class="btn btn-outline-danger" style="height:25px" @onclick="(() => bp.ReturnVehicle(vehicle.Id, iv.distance))">Return</button>
                             }
                         </td>
-                        <td class="badge text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</td>
+                        <td class="badge text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</td>                        
                     </tr>
-                    }
+                }
             </tbody>
         </table>
     </div>
@@ -125,13 +129,13 @@
                     <tr>
                         <td scope="row" class="fw-bold">@booking.Vehicle.RegNumber</td>
                         <td>@booking.Customer.LastName @booking.Customer.FirstName (@booking.Customer.SSN)</td>
-                        <td>@booking.Vehicle.Odometer</td>
+                        <td>@booking.KmRent</td>
                         <td>@booking.KmReturn</td>
                         <td>@booking.DateRented.ToShortDateString()</td>
                         <td>@booking.DateReturned.ToShortDateString()</td>
                         <td>@booking.RentCost</td>
                         <td class="badge text-bg-@(booking.Status == VehicleStatus.Booked ? "danger" : booking.Status == VehicleStatus.Closed ? "success" : "dark")
-                                                 @(booking.Status == VehicleStatus.Booked ? iv.Vehicle.Status == VehicleStatus.Booked : iv.Vehicle.Status == VehicleStatus.Closed)">@booking.Status
+                                             @(booking.Status == VehicleStatus.Booked ? iv.Vehicle.Status == VehicleStatus.Booked : iv.Vehicle.Status == VehicleStatus.Closed)">@booking.Status
                         </td>
                     </tr>
                 } 
