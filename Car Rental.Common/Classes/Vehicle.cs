@@ -7,10 +7,10 @@ public class Vehicle : IVehicle
 {
     public int Id { get; set; }
     public string RegNumber { get; set; } = string.Empty;
-    public VehicleBrands Brands { get; set; }
+    public VehicleBrands Brands { get; set; } = default;
     public int Odometer { get; set; } = 0;
     public double CostKm { get; set; } = 0;
-    public VehicleTypes Type { get; set; }
+    public VehicleTypes Type { get; set; } = default;
     public int CostDay { get; set; } = 0;
-    public VehicleStatus Status { get; set; }
+    public VehicleStatus Status { get; set; } = default;
 }

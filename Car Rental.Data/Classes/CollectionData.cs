@@ -1,5 +1,6 @@
 ﻿using Car_Rental.Common.Classes;
 using Car_Rental.Common.Enums;
+using Car_Rental.Common.Exceptions;
 using Car_Rental.Common.Extensions;
 using Car_Rental.Common.Interfaces;
 using Car_Rental.Data.Interfaces;
@@ -10,7 +11,7 @@ namespace Car_Rental.Data.Classes
 {
     public class CollectionData : IData
     {
-        string message = string.Empty;
+        public string exceptionMessage = string.Empty;
         readonly List<IPerson> _persons = new();
         readonly List<IVehicle> _vehicles = new();
         readonly List<IBooking> _bookings = new();
@@ -52,19 +53,15 @@ namespace Car_Rental.Data.Classes
             try
             {
                 var collections = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(f => f.FieldType == typeof(List<T>) && f.IsInitOnly) ?? throw new InvalidDataException();
-
-                var value = collections.GetValue(this) ?? throw new InvalidDataException();
-            
-                var collection = ((List<T>)value).AsQueryable();
-            
+                var value = collections.GetValue(this) ?? throw new InvalidDataException();          
+                var collection = ((List<T>)value).AsQueryable();         
                 if (expression is null) return collection.ToList();
-            
                 return collection.Where(expression).ToList();
             }
             catch { throw new InvalidDataException(); }
         }
 
-        T? IData.Single<T>(Expression<Func<T, bool>> expression) where T : default
+        T? IData.Single<T>(Expression<Func<T, bool>>? expression) where T : default
         {
             try
             {
@@ -74,9 +71,9 @@ namespace Car_Rental.Data.Classes
                 var collection = ((List<T>)value).AsQueryable();
                 return collection.Single(expression) ?? throw new InvalidDataException();
             }
-            catch 
+            catch
             {
-                throw new InvalidDataException();
+                throw new AddExceptions();
             }
         }
         void IData.Add<T>(T item)
@@ -88,7 +85,10 @@ namespace Car_Rental.Data.Classes
                 var value = collections.GetValue(this) as List<T> ?? throw new InvalidDataException();
                 value.Add(item);
             }
-            catch { throw new InvalidDataException(); }
+            catch (InvalidDataException ex)
+            {
+                 exceptionMessage = ex.Message;
+            }
         }
     }
 }

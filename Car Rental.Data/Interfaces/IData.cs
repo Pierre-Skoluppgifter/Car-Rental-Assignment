@@ -10,7 +10,7 @@ public interface IData
     public void Add<T>(T item);
     //IBooking RentVehicle(IBooking booking);
 
-    int NextVehicleId { get; }
+    public int NextVehicleId { get; }
     int NextPersonId { get; }
     int NextBookingId { get; }
 

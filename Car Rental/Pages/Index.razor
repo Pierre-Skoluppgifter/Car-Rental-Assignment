@@ -16,16 +16,15 @@
     @if (bp.Error != null)
     {
         <div class="alert alert-warning align-top;" style="width:500px; height:150px" role="alert">
-            <ul>
-                <li>@bp.Error</li>                
-            </ul>
+                <ul><li>@bp.Error</li>                
+                </ul>
         </div>
     }
 </div>
 
 @* Vehicles *@
 <h5>Vehicles</h5>
-<div class="col-md-7 align-top form-select-sm">
+<div class="col-md-7 form-select-sm">
     <table class="table border border-1 border-black table-hover table-sm table-borderless">
             <thead>
                 <tr class="bg-black table-active">
@@ -41,31 +40,38 @@
             </thead>
 
             <tbody>
-                <tr>
-                    <td><input style="width: 70px; height: 20px;" class="form-text;" @bind="iv.Vehicle.RegNumber"></td>
-                    <td>
-                        <select @bind="iv.Vehicle.Brands">
-                        @foreach (var brand in Enum.GetNames(typeof(VehicleBrands)))
-                        {
+            <tr>
+                <td><input disabled="@bp.WaitAsync" style="width: 70px; height: 20px" class="form-text;" @bind="iv.Vehicle.RegNumber"></td>
+                <td>
+                    <select disabled="@bp.WaitAsync" @bind="iv.Vehicle.Brands">
+                    @foreach (var brand in Enum.GetNames(typeof(VehicleBrands)))
+                    {
                             <option value="@Enum.Parse(typeof(VehicleBrands), @brand)">@brand</option>
+                    }
+                    </select>
+                </td>
+                <td><input disabled="@bp.WaitAsync" style="width: 50px; height: 20px" class="form-text;" @bind="iv.Vehicle.Odometer"></td>
+                <td><input disabled="@bp.WaitAsync" style="width: 50px; height: 20px" class="form-text;" @bind="iv.Vehicle.CostKm"></td>
+                <td>
+                    <select disabled="@bp.WaitAsync" @bind="iv.Vehicle.Type">
+                        @foreach (var type in Enum.GetNames(typeof(VehicleTypes)))
+                        {
+                            <option value="@Enum.Parse(typeof(VehicleTypes), @type)">@type</option>
                         }
-                        </select>
-                    </td>
-                    <td><input style="width: 50px; height: 20px;" class="form-text;" @bind="iv.Vehicle.Odometer"></td>
-                    <td><input style="width: 50px; height: 20px;" class="form-text;" @bind="iv.Vehicle.CostKm"></td>
-                    <td>
-                        <select @bind="iv.Vehicle.Type">
-                            @foreach (var type in Enum.GetNames(typeof(VehicleTypes)))
-                            {
-                                <option value="@Enum.Parse(typeof(VehicleTypes), @type)">@type</option>
-                            }
-                        </select>
-                    </td>
-                    <td><input style="width: 50px; height: 20px;" class="form-text;" @bind="iv.Vehicle.CostDay"></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-success align-top" @onclick="(() => bp.AddVehicle(iv.Vehicle))">Add</button>
-                    </td>
-                    </tr>
+                    </select>
+                </td>
+                <td><input disabled="@bp.WaitAsync" style="width: 50px; height: 20px" class="form-text;" @bind="iv.Vehicle.CostDay"></td>
+                <td>
+                    <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-success align-top;" @onclick="() => {bp.AddVehicle(iv.Vehicle); iv.Vehicle.Status = VehicleStatus.Available;}">Add</button>
+                </td>
+                <td>
+                    @if(bp.WaitAsync == true)
+                    {
+                        <badge class="badge bg-warning align-top" style="height: 20px">Processing</badge> 
+                    }
+
+                </td>
+                </tr>
 
                 @foreach (var vehicle in bp.GetVehicles())
                 {
@@ -79,25 +85,28 @@
                         <td><span class="align-content-center">
                             @if (vehicle.Status != VehicleStatus.Booked)
                             {
-                                @if(vehicle.Status == VehicleStatus.Closed){ vehicle.Status = VehicleStatus.Available; }
-                                <select @bind="iv.Person.SSN">
+
+                                <select disabled="@bp.WaitAsync" @bind="iv.Person.Id">
                                     @foreach (var person in bp.GetPersons())
                                     {
-                                        <option value="@person.SSN">@person.FirstName @person.LastName (@person.SSN)</option>
+                                        <option value="@person.Id">@person.FirstName @person.LastName (@person.SSN)</option>
                                     }
                                 </select>
 
-                            <button class="btn btn-sm btn-outline-info" style="height:25px" @onclick="(() => bp.AddBooking(vehicle, iv.Person.SSN))">Rent</button>
+                                <button disabled="@bp.WaitAsync" type="button" class="btn btn-sm btn-outline-info" style="height:25px" @onclick="async () => await bp.RentVehicle(vehicle.Id, iv.Person.Id)">Rent</button>
                             }
                             else
                             {
 
-                            <input type="number" class="form-text" style="width:144px" @bind="iv.distance">
-                            <button class="btn btn-sm btn-outline-danger" style="height:25px" @onclick="(() => bp.ReturnVehicle(vehicle.Id, iv.distance))">Return</button>
-                            }
+                                <input disabled="@bp.WaitAsync" type="number" class="form-text" style="width:144px" @bind="bp.Distance">
+                                <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-danger align-bottom" style="height:25px" @onclick="() => {bp.ReturnVehicle(vehicle.Id, bp.Distance); vehicle.Status = VehicleStatus.Available;}">Return</button>
+                        }
                         </span>
                     </td>
-                    <td><span class="badge align-bottom text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</span></td>
+                    <td>
+                        @if (vehicle.Status == VehicleStatus.Closed) { vehicle.Status = VehicleStatus.Available; }
+                            <span class="badge align-bottom text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</span>
+                    </td>
                 </tr>
                 }
             </tbody>
