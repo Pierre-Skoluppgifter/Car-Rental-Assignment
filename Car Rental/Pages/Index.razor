@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using Car_Rental.Classes
 @using Car_Rental.Common.Enums
 @using Car_Rental.Common.Classes
 @using Car_Rental.Business.Classes
@@ -102,16 +101,14 @@
                                 else
                                 {
 
-                                    <input disabled="@bp.WaitAsync" class="form-text" style="width:144px" @bind="iv.Distance">
-                            <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-danger" style="height:25px; margin-right: 55px" @onclick="async () => {await bp.ReturnVehicle(vehicle.Id, iv.Distance); iv.ClearDistance();}">Return</button>
+                                    <input disabled="@bp.WaitAsync" class="form-text" style="width:144px" @bind="bp.Distance">
+                            <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-danger" style="height:25px; margin-right: 55px" @onclick="async () => await bp.ReturnVehicle(vehicle.Id, bp.Distance)">Return</button>
 
                                 }
                     
                             </span>
                         </td>
                     <td>
-                        
-                            @if (vehicle.Status == VehicleStatus.Closed) { vehicle.Status = VehicleStatus.Available; }
                             <badge class="badge text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</badge>
                         </td>
                     </tr>
@@ -149,8 +146,7 @@
                         <td>@booking.DateRented.ToShortDateString()</td>
                         <td>@booking.DateReturned.ToShortDateString()</td>
                         <td>@booking.RentCost</td>
-                        <td class="badge text-bg-@(booking.Status == VehicleStatus.Booked ? "danger" : booking.Status == VehicleStatus.Closed ? "success" : "dark")
-                                             @(booking.Status == VehicleStatus.Booked ? iv.Vehicle.Status == VehicleStatus.Booked : iv.Vehicle.Status == VehicleStatus.Closed)">@booking.Status
+                        <td class="badge text-bg-@(booking.Status == VehicleStatus.Booked ? "danger" : booking.Status == VehicleStatus.Available ? "success" : "dark")">@(booking.Status == VehicleStatus.Booked ? "Booked" : "Closed")
                         </td>
                     </tr>
                 } 

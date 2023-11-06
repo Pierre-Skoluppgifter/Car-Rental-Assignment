@@ -1,6 +1,5 @@
 ﻿using Car_Rental.Common.Classes;
 using Car_Rental.Common.Enums;
-using Car_Rental.Common.Exceptions;
 using Car_Rental.Common.Extensions;
 using Car_Rental.Common.Interfaces;
 using Car_Rental.Data.Interfaces;
@@ -11,7 +10,7 @@ namespace Car_Rental.Data.Classes
 {
     public class CollectionData : IData
     {
-        public string exceptionMessage = string.Empty;
+        public string Error { get; set; }
         readonly List<IPerson> _persons = new();
         readonly List<IVehicle> _vehicles = new();
         readonly List<IBooking> _bookings = new();
@@ -43,7 +42,7 @@ namespace Car_Rental.Data.Classes
 
             var booking1 = new Booking(NextBookingId, person2, car1, car1.Odometer, null, null, DateTime.Now, DateTime.Now, car1.Status = VehicleStatus.Booked);
             _bookings.Add(booking1);
-            var booking2 = new Booking(NextBookingId, person2, car3, car3.Odometer, 3500, VehicleExtensions.Duration(DateTime.Now, DateTime.Now.AddDays(+2), car3.CostKm, car3.CostDay, 1234), DateTime.Now, DateTime.Now.AddDays(+2), car3.Status = VehicleStatus.Closed);
+            var booking2 = new Booking(NextBookingId, person2, car3, car3.Odometer, 3500, VehicleExtensions.Duration(DateTime.Now, DateTime.Now.AddDays(+2), car3.CostKm, car3.CostDay, 1234), DateTime.Now, DateTime.Now.AddDays(+2), car3.Status = VehicleStatus.Available);
             _bookings.Add(booking2);
             var booking3 = new Booking(NextBookingId, person1, motorcycle1, motorcycle1.Odometer, null, null, DateTime.Now, DateTime.Now, motorcycle1.Status = VehicleStatus.Booked);
             _bookings.Add(booking3);
@@ -86,9 +85,9 @@ namespace Car_Rental.Data.Classes
                 var value = collections.GetValue(this) as List<T> ?? throw new InvalidDataException();
                 value.Add(item);
             }
-            catch (InvalidDataException ex)
+            catch
             {
-                exceptionMessage = ex.Message;
+                throw new InvalidDataException();
             }
         }
     }

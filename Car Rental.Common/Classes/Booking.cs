@@ -26,6 +26,5 @@ public class Booking : IBooking
         DateRented = dateRented;
         DateReturned = dateReturned;
         Status = status;
-
     }
 }
