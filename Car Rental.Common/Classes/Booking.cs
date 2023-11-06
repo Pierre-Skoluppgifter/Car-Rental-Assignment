@@ -9,7 +9,7 @@ public class Booking : IBooking
     public IPerson Customer { get; set; }
     public IVehicle Vehicle { get; set; }
     public int KmRent { get; set; }
-    public int? KmReturn { get; set; }
+    public int? KmReturn { get; set; } = null;
     public double? RentCost { get; set; }
     public DateTime DateRented { get; set; }
     public DateTime DateReturned { get; set; }
@@ -26,6 +26,6 @@ public class Booking : IBooking
         DateRented = dateRented;
         DateReturned = dateReturned;
         Status = status;
-        
+
     }
 }

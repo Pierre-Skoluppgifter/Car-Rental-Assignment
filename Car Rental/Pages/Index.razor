@@ -1,8 +1,8 @@
 ﻿@page "/"
-@using Car_Rental.Business.Classes
 @using Car_Rental.Classes
-@using Car_Rental.Common.Classes
 @using Car_Rental.Common.Enums
+@using Car_Rental.Common.Classes
+@using Car_Rental.Business.Classes
 @using Car_Rental.Common.Extensions
 @inject BookingProcessor bp
 @inject InputValues iv
@@ -15,8 +15,9 @@
 <div>
     @if (bp.Error != null)
     {
-        <div class="alert alert-warning align-top;" style="width:500px; height:150px" role="alert">
-                <ul><li>@bp.Error</li>                
+        <div class="alert alert-warning align-top;" style="width:400px; height:75px" role="alert">
+                <ul>
+                    <li>@bp.Error</li>                
                 </ul>
         </div>
     }
@@ -24,57 +25,58 @@
 
 @* Vehicles *@
 <h5>Vehicles</h5>
-<div class="col-md-7 form-select-sm">
-    <table class="table border border-1 border-black table-hover table-sm table-borderless">
-            <thead>
-                <tr class="bg-black table-active">
-                    <th scope="col" class="bg-black text-white">Reg.Nr</th>
-                    <th scope="col" class="bg-black text-white">Brand</th>
-                    <th scope="col" class="bg-black text-white">Odometer</th>
-                    <th scope="col" class="bg-black text-white">Cost/Km</th>
-                    <th scope="col" class="bg-black text-white">Type</th>
-                    <th scope="col" class="bg-black text-white">$ day</th>
-                    <th scope="col" class="bg-black text-white">Action</th>
-                    <th scope="col" class="bg-black text-white">Status</th>
-                </tr>
-            </thead>
+<div class="col-md-10 form-select-sm">
+    <table class="table border border-1 border-black table-hover table-borderless align-bottom">
+        <thead>
+            <tr class="bg-black table-active">
+                <th scope="col" class="bg-black text-white">Reg.Nr</th>
+                <th scope="col" class="bg-black text-white">Brand</th>
+                <th scope="col" class="bg-black text-white">Odometer</th>
+                <th scope="col" class="bg-black text-white">Cost/Km</th>
+                <th scope="col" class="bg-black text-white">Type</th>
+                <th scope="col" class="bg-black text-white">$ day</th>
+                <th scope="col" class="bg-black text-white">Action</th>
+                <th scope="col" class="bg-black text-white">Status</th>
+            </tr>
+        </thead>
 
             <tbody>
-            <tr>
-                <td><input disabled="@bp.WaitAsync" style="width: 70px; height: 20px" class="form-text;" @bind="iv.Vehicle.RegNumber"></td>
-                <td>
-                    <select disabled="@bp.WaitAsync" @bind="iv.Vehicle.Brands">
+                <tr>
+                    <td><input disabled="@bp.WaitAsync" class="form-text" @bind="iv.Vehicle.RegNumber"></td>
+                    <td>
+                    <select disabled="@bp.WaitAsync" class="align-bottom" @bind="iv.Vehicle.Brands">
                     @foreach (var brand in Enum.GetNames(typeof(VehicleBrands)))
                     {
-                            <option value="@Enum.Parse(typeof(VehicleBrands), @brand)">@brand</option>
-                    }
-                    </select>
-                </td>
-                <td><input disabled="@bp.WaitAsync" style="width: 50px; height: 20px" class="form-text;" @bind="iv.Vehicle.Odometer"></td>
-                <td><input disabled="@bp.WaitAsync" style="width: 50px; height: 20px" class="form-text;" @bind="iv.Vehicle.CostKm"></td>
-                <td>
-                    <select disabled="@bp.WaitAsync" @bind="iv.Vehicle.Type">
-                        @foreach (var type in Enum.GetNames(typeof(VehicleTypes)))
-                        {
-                            <option value="@Enum.Parse(typeof(VehicleTypes), @type)">@type</option>
+                            <option value="@Enum.Parse(typeof(VehicleBrands), @brand)">@brand</option> 
                         }
-                    </select>
-                </td>
-                <td><input disabled="@bp.WaitAsync" style="width: 50px; height: 20px" class="form-text;" @bind="iv.Vehicle.CostDay"></td>
-                <td>
-                    <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-success align-top;" @onclick="() => {bp.AddVehicle(iv.Vehicle); iv.Vehicle.Status = VehicleStatus.Available;}">Add</button>
-                </td>
-                <td>
-                    @if(bp.WaitAsync == true)
-                    {
-                        <badge class="badge bg-warning align-top" style="height: 20px">Processing</badge> 
                     }
+                    </select>
+                    </td>
+                    <td><input disabled="@bp.WaitAsync" class="form-text" @bind="iv.Vehicle.Odometer"></td>
+                        <td><input disabled="@bp.WaitAsync" class="form-text" @bind="iv.Vehicle.CostKm"></td>
+                    <td>
+                        <select disabled="@bp.WaitAsync" class="align-bottom" @bind="iv.Vehicle.Type">
+                            @foreach (var type in Enum.GetNames(typeof(VehicleTypes)))
+                            {
+                                <option value="@Enum.Parse(typeof(VehicleTypes), @type)">@type</option>
+                            }
+                        </select>
+                    </td>
+                    <td><input disabled="@bp.WaitAsync" class="form-text" style="width:50px" @bind="iv.Vehicle.CostDay"></td>
+                    <td>
+                        <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-success" style="height:25px" @onclick="() => {bp.AddVehicle(iv.Vehicle); iv.ClearVehicle();}">Add</button>
+                    </td>
+                    <td>
+                        @if (bp.WaitAsync == true)
+                        {
+                            <badge class="badge bg-warning">Processing</badge>
+                        }
 
-                </td>
+                    </td>
                 </tr>
 
-                @foreach (var vehicle in bp.GetVehicles())
-                {
+                    @foreach (var vehicle in bp.GetVehicles())
+                    {
                     <tr>
                         <td scope="row" class="fw-bold">@vehicle.RegNumber</td>
                         <td>@vehicle.Brands</td>
@@ -83,40 +85,45 @@
                         <td>@vehicle.Type</td>
                         <td>@vehicle.CostDay</td>
                         <td><span class="align-content-center">
-                            @if (vehicle.Status != VehicleStatus.Booked)
-                            {
+                            
+                                @if (vehicle.Status != VehicleStatus.Booked)
+                                {
 
-                                <select disabled="@bp.WaitAsync" @bind="iv.Person.Id">
-                                    @foreach (var person in bp.GetPersons())
-                                    {
-                                        <option value="@person.Id">@person.FirstName @person.LastName (@person.SSN)</option>
-                                    }
-                                </select>
+                                    <select disabled="@bp.WaitAsync" style="height:25px" @bind="iv.Person.Id">
+                                        @foreach (var person in bp.GetPersons())
+                                        {
+                                            <option value="@person.Id">@person.FirstName @person.LastName (@person.SSN)</option>
+                                        }
+                            </select>
 
-                                <button disabled="@bp.WaitAsync" type="button" class="btn btn-sm btn-outline-info" style="height:25px" @onclick="async () => await bp.RentVehicle(vehicle.Id, iv.Person.Id)">Rent</button>
-                            }
-                            else
-                            {
 
-                                <input disabled="@bp.WaitAsync" type="number" class="form-text" style="width:144px" @bind="bp.Distance">
-                                <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-danger align-bottom" style="height:25px" @onclick="() => {bp.ReturnVehicle(vehicle.Id, bp.Distance); vehicle.Status = VehicleStatus.Available;}">Return</button>
-                        }
-                        </span>
-                    </td>
+                                    <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-info" style="height:25px" @onclick="async () => {await bp.RentVehicle(vehicle.Id, iv.Person.Id); iv.Person.Id = default;}">Rent</button>
+                                }
+                                else
+                                {
+
+                                    <input disabled="@bp.WaitAsync" class="form-text" style="width:144px" @bind="iv.Distance">
+                            <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-danger" style="height:25px; margin-right: 55px" @onclick="async () => {await bp.ReturnVehicle(vehicle.Id, iv.Distance); iv.ClearDistance();}">Return</button>
+
+                                }
+                    
+                            </span>
+                        </td>
                     <td>
-                        @if (vehicle.Status == VehicleStatus.Closed) { vehicle.Status = VehicleStatus.Available; }
-                            <span class="badge align-bottom text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</span>
-                    </td>
-                </tr>
+                        
+                            @if (vehicle.Status == VehicleStatus.Closed) { vehicle.Status = VehicleStatus.Available; }
+                            <badge class="badge text-bg-@(vehicle.Status == VehicleStatus.Booked ? "danger" : "dark")">@vehicle.Status</badge>
+                        </td>
+                    </tr>
                 }
             </tbody>
-        </table>
-    </div>
+    </table>
+</div>
 
 @* Bookings *@
 <h5>Bookings</h5>
 <div class="row">
-    <div class="col-md-7 form-select-sm">
+    <div class="col-md-6 form-select-sm">
         <table class="table border border-1 border-black table-hover table-sm table-borderless align-baseline">
             <thead>
                 <tr>
@@ -171,7 +178,7 @@
                     <td><input style="width: 75px" class="form-text" name="SSN" @bind="iv.Person.SSN"></td>
                     <td><input style="width: 120px" class="form-text" name="FirstName" @bind="iv.Person.LastName"></td>
                     <td><input style="width: 120px" class="form-text" name="LastName" @bind="iv.Person.FirstName"></td>
-                    <td><button class="btn btn-sm btn-outline-success" name="AddPerson" style="height: 25px; width:40px" @onclick="(() => bp.AddPerson(iv.Person))">Add</button></td>
+                    <td><button class="btn btn-sm btn-outline-success" name="AddPerson" style="height: 25px; width:40px" @onclick="() => {bp.AddPerson(iv.Person); iv.ClearPerson();}">Add</button></td>
                 </tr>
                     @foreach(var person in bp.GetPersons())
                     {

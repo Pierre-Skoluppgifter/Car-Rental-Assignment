@@ -5,7 +5,12 @@ namespace Car_Rental.Classes;
 
 public class InputValues
 {
-    public IVehicle Vehicle { get; private set; } = new Vehicle();
-    public IPerson Person { get; set; } = new Person();    
+    public IVehicle Vehicle { get; set; } = new Vehicle();
+    public IPerson Person { get; set; } = new Person();
+    public int Distance { get; set; } = 0;
+
+    public void ClearDistance() => Distance = 0;
+    public void ClearVehicle() => Vehicle = new Vehicle();
+    public void ClearPerson() => Person = new Person();
 }
 

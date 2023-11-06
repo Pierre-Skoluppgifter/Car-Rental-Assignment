@@ -6,5 +6,5 @@ public enum VehicleBrands
     Tesla,
     VolksWagen,
     Jeep,
-    Yamaha
+    Yamaha,
 }

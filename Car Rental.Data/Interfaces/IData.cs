@@ -1,21 +1,21 @@
-﻿using System.Linq.Expressions;
+﻿using Car_Rental.Common.Enums;
+using System.Linq.Expressions;
 
 namespace Car_Rental.Data.Interfaces;
 
 public interface IData
 {
-
     List<T> Get<T>(Func<T, bool>? expression);
     T? Single<T>(Expression<Func<T, bool>>? expression);
     public void Add<T>(T item);
     //IBooking RentVehicle(IBooking booking);
 
-    public int NextVehicleId { get; }
+    int NextVehicleId { get; }
     int NextPersonId { get; }
     int NextBookingId { get; }
 
-    // Default Interface Methods
-    //public string[] VehicleStatusNames => Retunera enum konstanterna
-    //public string[] VehicleTypeNames => Retunera enum konstanterna
-    //public VehicleTypes GetVehicleType(string name) => //Retunera en enum konstants värde med hjälp av konstantens namn
+    //IBooking RentVehicle(int vehicleId, int customerId); Använder inte metoden verkar fungera ändå?
+    //IBooking ReturnVehicle(int vehicleId); Använder inte metoden verkar fungera ändå?
+    public string[] VehicleStatusNames => Enum.GetNames(typeof(VehicleBrands));
+    public string[] VehicleTypeNames => Enum.GetNames(typeof(VehicleTypes));
 }
