@@ -1,5 +1,4 @@
-﻿using Car_Rental.Common.Classes;
-using Car_Rental.Common.Enums;
+﻿using Car_Rental.Common.Enums;
 using Car_Rental.Common.Interfaces;
 using Car_Rental.Data.Interfaces;
 
@@ -8,38 +7,35 @@ namespace Car_Rental.Business.Classes;
 
 public class BookingProcessor
 {
+    public string? Error { get; set; } = null;
     public int Distance { get; set; }
-    public string[] VehicleStatusNames { get; }
-    public string[] VehicleTypeNames { get; }
-    public string? Error = null;
+    public string[]? VehicleStatusNames { get; }
+    public string[]? VehicleTypeNames { get; }
     public bool WaitAsync { get; set; } = false;
     private readonly IData _db;
 
     public BookingProcessor(IData db) => _db = db;
     public IEnumerable<IBooking> GetBookings() => _db.Get<IBooking>(b => b != null);
-    public IBooking GetBooking(int vehicleId) => _db.Single<Booking>(v => v.Id == vehicleId);
-    public IEnumerable<IPerson> GetPersons() => _db.Get<IPerson>(p => p != null);
-    public IPerson GetPerson(string ssn) => _db.Single<Person>(p => p.SSN == ssn);
+    public IBooking? GetBooking(int vehicleId) => _db.Single<IBooking>(v => v.Id == vehicleId);
+    public IEnumerable<ICustomer> GetPersons() => _db.Get<ICustomer>(p => p != null);
+    public ICustomer? GetPerson(string ssn) => _db.Single<ICustomer>(p => p.SSN == ssn);
     public IEnumerable<IVehicle> GetVehicles() => _db.Get<IVehicle>(v => v != null);
-    public IVehicle GetVehicle(int vehicleId) => _db.Single<Vehicle>(v => v.Id == vehicleId);
-    public IVehicle GetVehicle(string regNo) => _db.Single<Vehicle>(v => v.RegNumber == regNo);
+    public IVehicle? GetVehicle(int vehicleId) => _db.Single<IVehicle>(v => v.Id == vehicleId);
+    public IVehicle? GetVehicle(string regNo) => _db.Single<IVehicle>(v => v.RegNumber == regNo);
 
-    public async Task RentVehicle(int vehicleId, int customerId)
+    public async Task RentVehicle(IVehicle vehicle, int customerId)
     {
         WaitAsync = true;
         await Task.Delay(5000);
-        _db.RentVehicle(vehicleId, customerId);
+        _db.RentVehicle(vehicle, customerId);
         WaitAsync = false;
     }
-    public async Task ReturnVehicle(int vehicleId, int distance)
+    public async Task ReturnVehicle(IVehicle vehicle, int distance)
     {
-        var booking = _db.Single<IBooking>(b => b.Vehicle.Id == vehicleId && b.Status != VehicleStatus.Available);
-        
         WaitAsync = true;
         await Task.Delay(2000);
         WaitAsync = false;
-        booking.KmReturn = distance;
-        _db.ReturnVehicle(vehicleId);
+        _db.ReturnVehicle(vehicle, distance);
     }
     public void AddVehicle(IVehicle iv)
     {
@@ -60,16 +56,16 @@ public class BookingProcessor
                             return;
                         }
                     }
-                    _db.Error = null;
+                    Error = null;
                     iv.Status = VehicleStatus.Available;
                     _db.Add(iv);
                 }
                 else
-                    _db.Error = "Reg.nr must have three letters + three numbers (in that order)!";
+                    Error = "Reg.nr must have three letters + three numbers (in that order)!";
                 return;
             }
             else
-                _db.Error = "One or more field(s) are incorrect!";
+                Error = "One or more field(s) are incorrect!";
             return;
         }
         catch
@@ -77,17 +73,17 @@ public class BookingProcessor
 
         }
     }
-    public void AddPerson(IPerson iPerson)
+    public void AddPerson(ICustomer iPerson)
     {
         if (iPerson.SSN.Length == 6)
         {
             iPerson.Id = _db.NextPersonId;
             _db.Add(iPerson);
-            _db.Error = null;
+            Error = null;
         }
         else
         {
-            _db.Error = "Ssn can not be longer or shorter than 6 numbers! (123456)";
+            Error = "Ssn can not be longer or shorter than 6 numbers! (123456)";
             return;
         }
     }

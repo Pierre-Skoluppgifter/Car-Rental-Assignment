@@ -14,32 +14,33 @@ public interface IData
     public string[] VehicleStatusNames => Enum.GetNames(typeof(VehicleBrands));
     public string[] VehicleTypeNames => Enum.GetNames(typeof(VehicleTypes));
 
-    public string? Error { get; set; }
     List<T> Get<T>(Func<T, bool>? expression);
     T? Single<T>(Expression<Func<T, bool>>? expression);
     public void Add<T>(T item);
 
-
-    IBooking RentVehicle(int vehicleId, int customerId)
+    IBooking RentVehicle(IVehicle vehicle, int customerId)
     {
-        var vehicle = Single<IVehicle>(v => v.Id == vehicleId);
-        var customer = Single<IPerson>(p => p.Id == customerId);
-        
-        Booking booking = new(NextBookingId, customer, vehicle, vehicle.Odometer, null, null, DateTime.Now, DateTime.Now, VehicleStatus.Booked);
+        var customer = Single<ICustomer>(p => p.Id == customerId);
+        var booking = new Booking(NextBookingId, customer, vehicle, vehicle.Odometer, 0, null, DateTime.Now, DateTime.Now, BookingStatus.Open);
         Add<IBooking>(booking);
         vehicle.Status = VehicleStatus.Booked;
         return booking;
     }
-    void ReturnVehicle(int vehicleId)
+    IBooking ReturnVehicle(IVehicle vehicle, int distance)
     {
+        var booking = Single<IBooking>(b => b.Vehicle.Id == vehicle.Id && b.Status == BookingStatus.Open);
+        booking.Distance = distance;
         var dateReturn = DateTime.Now;
-        var returnBooking = Single<IBooking>(b => b.Vehicle.Id == vehicleId);
-        var vehicle = Single<IVehicle>(v => v.Id == vehicleId);
-        returnBooking.RentCost = VehicleExtensions.Duration(returnBooking.DateRented, returnBooking.DateReturned, returnBooking.Vehicle.CostKm, returnBooking.Vehicle.CostDay, (int)returnBooking.KmReturn);
-        vehicle.Odometer += (int)returnBooking.KmReturn;
-        returnBooking.KmReturn = vehicle.Odometer;
-        returnBooking.Status = VehicleStatus.Available;
-        vehicle.Status = VehicleStatus.Available;
+        var rentedDays = VehicleExtensions.Duration(booking.DateRented, dateReturn);
+        var totalKmCost = booking.Distance * booking.Vehicle.CostKm;
+        var totalRentCost = (rentedDays * booking.Vehicle.CostDay) + totalKmCost;
+        booking.RentCost = totalRentCost;
+
+        booking.Vehicle.Odometer += (int)booking.Distance;
+        booking.Distance = booking.Vehicle.Odometer;
+        booking.Vehicle.Status = VehicleStatus.Available;
+        booking.Status = BookingStatus.Closed;
+        return booking;
     }
     public int VehicleTypes(string name) => (int)Enum.Parse(typeof(VehicleTypes),name);
 }

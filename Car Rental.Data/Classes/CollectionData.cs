@@ -10,8 +10,9 @@ namespace Car_Rental.Data.Classes
 {
     public class CollectionData : IData
     {
-        public string Error { get; set; }
-        readonly List<IPerson> _persons = new();
+        public string Message { get; set; }
+        public string? Error { get; set; }
+        readonly List<ICustomer> _persons = new();
         readonly List<IVehicle> _vehicles = new();
         readonly List<IBooking> _bookings = new();
 
@@ -35,17 +36,15 @@ namespace Car_Rental.Data.Classes
             var motorcycle1 = new Motorcycle(NextVehicleId, "OSK444", VehicleBrands.Yamaha, 1650, 1.5, VehicleTypes.Motorcycle, 150, VehicleStatus.Available);
             _vehicles.Add(motorcycle1);
 
-            var person1 = new Person(NextPersonId, "123456", "John", "Doe");
-            _persons.Add(person1);
-            var person2 = new Person(NextPersonId, "159357", "Jane", "Doe");
-            _persons.Add(person2);
+            var customer1 = new Customer(NextPersonId, "123456", "John", "Doe");
+            _persons.Add(customer1);
+            var customer2 = new Customer(NextPersonId, "159357", "Jane", "Doe");
+            _persons.Add(customer2);
 
-            var booking1 = new Booking(NextBookingId, person2, car1, car1.Odometer, null, null, DateTime.Now, DateTime.Now, car1.Status = VehicleStatus.Booked);
+            var booking1 = new Booking(NextBookingId, customer2, car1, car1.Odometer, null, null, DateTime.Now, DateTime.Now, BookingStatus.Open);
             _bookings.Add(booking1);
-            var booking2 = new Booking(NextBookingId, person2, car3, car3.Odometer, 3500, VehicleExtensions.Duration(DateTime.Now, DateTime.Now.AddDays(+2), car3.CostKm, car3.CostDay, 1234), DateTime.Now, DateTime.Now.AddDays(+2), car3.Status = VehicleStatus.Available);
+            var booking2 = new Booking(NextBookingId, customer1, motorcycle1, motorcycle1.Odometer, null, null, DateTime.Now, DateTime.Now, BookingStatus.Open);
             _bookings.Add(booking2);
-            var booking3 = new Booking(NextBookingId, person1, motorcycle1, motorcycle1.Odometer, null, null, DateTime.Now, DateTime.Now, motorcycle1.Status = VehicleStatus.Booked);
-            _bookings.Add(booking3);
         }
 
         public List<T> Get<T>(Func<T, bool>? expression)
@@ -61,7 +60,7 @@ namespace Car_Rental.Data.Classes
             catch { throw new InvalidDataException(); }
         }
 
-        T? IData.Single<T>(Expression<Func<T, bool>>? expression) where T : default
+        public T? Single<T>(Expression<Func<T, bool>>? expression)
         {
             try
             {

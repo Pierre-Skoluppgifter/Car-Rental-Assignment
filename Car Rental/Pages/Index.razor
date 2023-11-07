@@ -24,7 +24,7 @@
 
 @* Vehicles *@
 <h5>Vehicles</h5>
-<div class="col-md-10 form-select-sm">
+<div class="col-md-9 form-select-sm">
     <table class="table border border-1 border-black table-hover table-borderless align-bottom">
         <thead>
             <tr class="bg-black table-active">
@@ -84,28 +84,32 @@
                         <td>@vehicle.Type</td>
                         <td>@vehicle.CostDay</td>
                         <td><span class="align-content-center">
-                            
-                                @if (vehicle.Status != VehicleStatus.Booked)
+                            @foreach (var booking in bp.GetBookings())
+                            {
+                                if (booking.Status == BookingStatus.Open)
                                 {
-
-                                    <select disabled="@bp.WaitAsync" style="height:25px" @bind="iv.Person.Id">
-                                        @foreach (var person in bp.GetPersons())
-                                        {
-                                            <option value="@person.Id">@person.FirstName @person.LastName (@person.SSN)</option>
-                                        }
-                            </select>
-
-
-                                    <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-info" style="height:25px" @onclick="async () => {await bp.RentVehicle(vehicle.Id, iv.Person.Id); iv.Person.Id = default;}">Rent</button>
+                                    booking.Vehicle.Status = VehicleStatus.Booked;
                                 }
-                                else
-                                {
+                            }
+                            @if (vehicle.Status == VehicleStatus.Available)
+                            {
 
-                                    <input disabled="@bp.WaitAsync" class="form-text" style="width:144px" @bind="bp.Distance">
-                            <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-danger" style="height:25px; margin-right: 55px" @onclick="async () => await bp.ReturnVehicle(vehicle.Id, bp.Distance)">Return</button>
+                                <select disabled="@bp.WaitAsync" style="height:25px" @bind="iv.Customer.Id">
+                                    @foreach (var customer in bp.GetPersons())
+                                    {
+                                        <option value="@customer.Id">@customer.FirstName @customer.LastName (@customer.SSN)</option>
+                                    }
+                                </select>
 
-                                }
-                    
+
+                            <button disabled="@bp.WaitAsync" class="input-group flex-nowrap btn btn-sm btn-outline-info" style="height:25px; width:50px" @onclick="async () => await bp.RentVehicle(vehicle, iv.Customer.Id)">Rent</button>
+                            }
+                            else
+                            {
+                                <input disabled="@bp.WaitAsync" class="form-text" style="width:144px" @bind="bp.Distance">
+                            <button disabled="@bp.WaitAsync" class="btn btn-sm btn-outline-danger" style="height:25px; margin-right: 55px" @onclick="async () => await bp.ReturnVehicle(vehicle, bp.Distance)">Return</button>
+
+                            }
                             </span>
                         </td>
                     <td>
@@ -141,12 +145,12 @@
                     <tr>
                         <td scope="row" class="fw-bold">@booking.Vehicle.RegNumber</td>
                         <td>@booking.Customer.LastName @booking.Customer.FirstName (@booking.Customer.SSN)</td>
-                        <td>@booking.KmRent</td>
-                        <td>@booking.KmReturn</td>
+                        <td>@booking.KmRented</td>
+                        <td>@booking.Distance</td>
                         <td>@booking.DateRented.ToShortDateString()</td>
                         <td>@booking.DateReturned.ToShortDateString()</td>
                         <td>@booking.RentCost</td>
-                        <td class="badge text-bg-@(booking.Status == VehicleStatus.Booked ? "danger" : booking.Status == VehicleStatus.Available ? "success" : "dark")">@(booking.Status == VehicleStatus.Booked ? "Booked" : "Closed")
+                        <td class="badge text-bg-@(booking.Status == BookingStatus.Open ? "danger" : "success")">@booking.Status
                         </td>
                     </tr>
                 } 
@@ -171,10 +175,10 @@
 
                 <tbody>
                 <tr>
-                    <td><input style="width: 75px" class="form-text" name="SSN" @bind="iv.Person.SSN"></td>
-                    <td><input style="width: 120px" class="form-text" name="FirstName" @bind="iv.Person.LastName"></td>
-                    <td><input style="width: 120px" class="form-text" name="LastName" @bind="iv.Person.FirstName"></td>
-                    <td><button class="btn btn-sm btn-outline-success" name="AddPerson" style="height: 25px; width:40px" @onclick="() => {bp.AddPerson(iv.Person); iv.ClearPerson();}">Add</button></td>
+                    <td><input style="width: 75px" class="form-text" name="SSN" @bind="iv.Customer.SSN"></td>
+                    <td><input style="width: 120px" class="form-text" name="FirstName" @bind="iv.Customer.LastName"></td>
+                    <td><input style="width: 120px" class="form-text" name="LastName" @bind="iv.Customer.FirstName"></td>
+                    <td><button class="btn btn-sm btn-outline-success" name="AddPerson" style="height: 25px; width:40px" @onclick="() => {bp.AddPerson(iv.Customer); iv.ClearPerson();}">Add</button></td>
                 </tr>
                     @foreach(var person in bp.GetPersons())
                     {

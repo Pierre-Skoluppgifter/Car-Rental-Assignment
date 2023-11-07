@@ -5,9 +5,9 @@ namespace Car_Rental.Common.Classes;
 public class InputValues
 {
     public IVehicle Vehicle { get; set; } = new Vehicle();
-    public IPerson Person { get; set; } = new Person();
+    public ICustomer Customer { get; set; } = new Customer();
 
     public void ClearVehicle() => Vehicle = new Vehicle();
-    public void ClearPerson() => Person = new Person();
+    public void ClearPerson() => Customer = new Customer();
 }
 
